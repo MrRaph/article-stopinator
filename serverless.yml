@@ -1,0 +1,32 @@
+service: Stopinator
+
+provider:
+  name: aws
+  runtime: python2.7
+  region: eu-west-1
+  profile: profileName1
+  cfLogs: false
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "ec2:DescribeInstances"
+        - "ec2:StartInstances"
+        - "ec2:StopInstances"
+      Resource: "*"
+
+functions:
+  doStop:
+    handler: handler.doStop
+    description: Stops instances
+    runtime: python2.7
+    memorySize: 128 # optional, default is 1024
+    timeout: 60 # optional, default is 6
+    events:
+      - schedule:
+          name: DEVEveningShutDownEC2
+          description: 'Shut down DEV EC2 at 19:50 PM'
+          rate: cron(50 17 ? * 2-6 *) # AWS CloudWatch Events time are in UTC !
+          enabled: true
+          input:
+            ENV: DEV
