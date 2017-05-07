@@ -9,13 +9,6 @@ def doStop(event, context):
     response = "doStop"
 
     for instance in filterInstances(event['ENV'], 'running'):
-        if instance.tags :
-          for tag in instance.tags:
-            if tag['Key'] == "Name" :
-              response += "Name: " + tag['Value']
-              print "Stopping instance : " + tag['Value']
-            elif tag['Key'] == "Environment":
-                response += "Environment: " + tag['Value']
         instance.stop()
 
     return response
